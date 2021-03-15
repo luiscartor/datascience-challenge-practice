@@ -2,9 +2,8 @@
 title: "Data Science Challenge"
 author: "Luis Carrasco Tornero"
 date: "June 3, 2018"
-output:
-  pdf_document: default
-  word_document: default
+output: rmarkdown::github_document
+
 ---
 
 ```{r include = FALSE}
