@@ -128,8 +128,9 @@ The Wilcoxon test indicates that we can not assume that the means are different.
 We can compare the mean duration values for _linear_ and _road_:
 
 ```{r}
-mean(as.numeric(df_sub$duration[df_sub$trip_id=="linear"]))
-mean(as.numeric(df_sub$duration[df_sub$trip_id=="road"]))
+options(warn=-1)
+mean(as.numeric(df_sub$duration[df_sub$trip_id=="linear"]),na.rm = T)
+mean(as.numeric(df_sub$duration[df_sub$trip_id=="road"]),na.rm = T)
 ```
 
 The _road_ assignment was, in average, only 2 seconds faster. Although this is not statistically significant and this difference could be due to randomness.

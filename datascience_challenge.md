@@ -180,7 +180,7 @@ with(df_sub[sample(1:nrow(df_sub),5000),],
     ##  Shapiro-Wilk normality test
     ## 
     ## data:  as.numeric(duration[trip_id == "linear"])
-    ## W = 0.53849, p-value < 2.2e-16
+    ## W = 0.66523, p-value < 2.2e-16
 
 ``` r
 # Shapiro-Wilk normality test for linear duration
@@ -194,7 +194,7 @@ with(df_sub[sample(1:nrow(df_sub),5000),],
     ##  Shapiro-Wilk normality test
     ## 
     ## data:  as.numeric(duration[trip_id == "road"])
-    ## W = 0.66093, p-value < 2.2e-16
+    ## W = 0.71322, p-value < 2.2e-16
 
 The W values and p-values indicate that the data is not normally
 distributed. Because of this, t-tests cannot be used. We then have to
@@ -228,22 +228,17 @@ rides.
 We can compare the mean duration values for *linear* and *road*:
 
 ``` r
-mean(as.numeric(df_sub$duration[df_sub$trip_id=="linear"]))
+options(warn=-1)
+mean(as.numeric(df_sub$duration[df_sub$trip_id=="linear"]),na.rm = T)
 ```
 
-    ## Warning in mean(as.numeric(df_sub$duration[df_sub$trip_id == "linear"])): NAs
-    ## introduced by coercion
-
-    ## [1] NA
+    ## [1] 299.6676
 
 ``` r
-mean(as.numeric(df_sub$duration[df_sub$trip_id=="road"]))
+mean(as.numeric(df_sub$duration[df_sub$trip_id=="road"]),na.rm = T)
 ```
 
-    ## Warning in mean(as.numeric(df_sub$duration[df_sub$trip_id == "road"])): NAs
-    ## introduced by coercion
-
-    ## [1] NA
+    ## [1] 300.548
 
 The *road* assignment was, in average, only 2 seconds faster. Although
 this is not statistically significant and this difference could be due
@@ -265,16 +260,8 @@ durations above 3000 seconds:
 ``` r
 p2 <- ggplot(aes(y = as.numeric(duration), x = as.factor(trip_id)), 
              data = df_sub[as.numeric(df_sub$duration)>3000,]) + geom_boxplot()
-```
-
-    ## Warning in `[.data.frame`(df_sub, as.numeric(df_sub$duration) > 3000, ): NAs
-    ## introduced by coercion
-
-``` r
 p2 + xlab("Assigment") + ylab("Duration (s)") 
 ```
-
-    ## Warning: Removed 299 rows containing non-finite values (stat_boxplot).
 
 ![](datascience_challenge_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
@@ -294,12 +281,6 @@ p3 <- ggplot(aes(y = as.numeric(duration), x = as.factor(city_id),
 p3 + xlab("City") + ylab("Duration (s)") + theme(legend.title=element_blank()) 
 ```
 
-    ## Warning in FUN(X[[i]], ...): NAs introduced by coercion
-
-    ## Warning in FUN(X[[i]], ...): NAs introduced by coercion
-
-    ## Warning: Removed 299 rows containing non-finite values (stat_boxplot).
-
 ![](datascience_challenge_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
 Volantis seems to be benefited by the *road* assignment, but a formal
@@ -315,61 +296,22 @@ df_volantis <- df_sub[df_sub$city_id=="volantis",]
 # Normality test
 with(df_bravos[sample(1:nrow(df_bravos),5000),], 
      shapiro.test(as.numeric(duration[trip_id == "linear"]))) #p-value < 2.2e-16
-```
-
-    ## Warning in stopifnot(is.numeric(x)): NAs introduced by coercion
-
-``` r
 with(df_pentos[sample(1:nrow(df_pentos),5000),], 
      shapiro.test(as.numeric(duration[trip_id == "linear"]))) #p-value < 2.2e-16
-```
-
-    ## Warning in stopifnot(is.numeric(x)): NAs introduced by coercion
-
-``` r
 with(df_volantis[sample(1:nrow(df_volantis),5000),], 
      shapiro.test(as.numeric(duration[trip_id == "linear"]))) #p-value < 2.2e-16
-```
 
-    ## Warning in stopifnot(is.numeric(x)): NAs introduced by coercion
-
-``` r
 # Equality of means test
 wilcox.test(as.numeric(df_bravos$duration[df_bravos$trip_id=="road"]),
             as.numeric(df_bravos$duration[df_bravos$trip_id=="linear"]), 
             alternative = "two.sided")                        #p-value = 0.5828
-```
-
-    ## Warning in wilcox.test(as.numeric(df_bravos$duration[df_bravos$trip_id == : NAs
-    ## introduced by coercion
-
-    ## Warning in wilcox.test.default(as.numeric(df_bravos$duration[df_bravos$trip_id
-    ## == : NAs introduced by coercion
-
-``` r
 wilcox.test(as.numeric(df_pentos$duration[df_pentos$trip_id=="road"]),
             as.numeric(df_pentos$duration[df_pentos$trip_id=="linear"]), 
             alternative = "two.sided")                        #p-value = 0.9311
-```
-
-    ## Warning in wilcox.test(as.numeric(df_pentos$duration[df_pentos$trip_id == : NAs
-    ## introduced by coercion
-
-    ## Warning in wilcox.test.default(as.numeric(df_pentos$duration[df_pentos$trip_id
-    ## == : NAs introduced by coercion
-
-``` r
 wilcox.test(as.numeric(df_volantis$duration[df_volantis$trip_id=="road"]),
             as.numeric(df_volantis$duration[df_volantis$trip_id=="linear"]), 
             alternative = "two.sided")                        #p-value = 0.3462
 ```
-
-    ## Warning in wilcox.test(as.numeric(df_volantis$duration[df_volantis$trip_id == :
-    ## NAs introduced by coercion
-
-    ## Warning in
-    ## wilcox.test.default(as.numeric(df_volantis$duration[df_volantis$trip_id == : NAs
-    ## introduced by coercion
 
 The W and p-values show that it cannot be concluded that the means are
 different. The duration of the travel of each assignment is equal for
@@ -394,12 +336,6 @@ p4 <- ggplot(aes(y = as.numeric(duration), x = as.factor(tinterv), fill =
                    as.factor(trip_id)), data = df_sub) + geom_boxplot() 
 p4 + xlab("Day interval") + ylab("Duration (s)") + theme(legend.title=element_blank()) 
 ```
-
-    ## Warning in FUN(X[[i]], ...): NAs introduced by coercion
-
-    ## Warning in FUN(X[[i]], ...): NAs introduced by coercion
-
-    ## Warning: Removed 299 rows containing non-finite values (stat_boxplot).
 
 ![](datascience_challenge_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
